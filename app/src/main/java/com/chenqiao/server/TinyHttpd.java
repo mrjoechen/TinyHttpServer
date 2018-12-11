@@ -1,5 +1,7 @@
 package com.chenqiao.server;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.chenqiao.handler.AbstractHandler;
@@ -25,6 +27,8 @@ public class TinyHttpd extends NanoHTTPD {
 
     private static final TinyHttpd TINY_SERVER = new TinyHttpd();
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+
     public static TinyHttpd getInstance() {
         return TINY_SERVER;
     }
@@ -43,8 +47,19 @@ public class TinyHttpd extends NanoHTTPD {
         response.addHeader("Access-Control-Allow-Headers", "authorization");
         response.addHeader("Access-Control-Allow-Origin", "*");
         String remoteHostName = session.getRemoteHostName();
-        String uri = session.getUri();
+        final String uri = session.getUri();
         Log.d(TAG, remoteHostName);
+
+        if (!StringUtils.isEmpty(uri) && !"/favicon.ico".equals(uri)){
+            if (mOnServListener != null){
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        mOnServListener.onServe(uri);
+                    }
+                });
+            }
+        }
         Log.d(TAG, uri);
         return response;
 
@@ -102,5 +117,15 @@ public class TinyHttpd extends NanoHTTPD {
             e.printStackTrace();
         }
         return body;
+    }
+
+    public interface OnServListener{
+        void onServe(String result);
+    }
+
+    private OnServListener mOnServListener;
+
+    public void setOnserveListener(OnServListener onserveListener){
+        mOnServListener = onserveListener;
     }
 }
