@@ -9,7 +9,9 @@ import com.chenqiao.handler.HttpdHandler;
 import com.chenqiao.util.StringUtils;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
@@ -46,9 +48,31 @@ public class TinyHttpd extends NanoHTTPD {
         Response response = newFixedLengthResponse("welcome to ngrok build by chenqiao!");
         response.addHeader("Access-Control-Allow-Headers", "authorization");
         response.addHeader("Access-Control-Allow-Origin", "*");
+        Log.d(TAG, "--------------------------------------");
+
         String remoteHostName = session.getRemoteHostName();
-        final String uri = session.getUri();
         Log.d(TAG, remoteHostName);
+        String remoteIpAddress = session.getRemoteIpAddress();
+        Log.d(TAG + "-remoteIp", remoteIpAddress);
+        final String uri = session.getUri();
+        Method method = session.getMethod();
+        Log.d(TAG + "-method", method.name());
+        Log.d(TAG + "-uri", uri);
+        Map<String, List<String>> parameters = session.getParameters();
+        Log.d(TAG + "-param", parameters.toString());
+        String queryParameterString = session.getQueryParameterString();
+        Log.d(TAG + "-queryParam", StringUtils.isEmpty(queryParameterString) ? "null" : queryParameterString);
+
+        InputStream inputStream = session.getInputStream();
+        String s = "";
+        try {
+            s = StringUtils.parseInputStreamToString(inputStream);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.d(TAG + "-body", s);
+
+        Log.d(TAG, "--------------------------------------");
 
         if (!StringUtils.isEmpty(uri) && !"/favicon.ico".equals(uri)){
             if (mOnServListener != null){
@@ -60,7 +84,6 @@ public class TinyHttpd extends NanoHTTPD {
                 });
             }
         }
-        Log.d(TAG, uri);
         return response;
 
     }

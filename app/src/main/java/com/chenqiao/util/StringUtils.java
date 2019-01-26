@@ -4,7 +4,10 @@ import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.NetworkInterface;
@@ -640,6 +643,25 @@ public class StringUtils {
         }
 
         return MAC;
+    }
+
+    public static String parseInputStreamToString(InputStream inputStream) throws IOException {
+
+//        StringBuilder sb = new StringBuilder();
+//        String line;
+//
+//        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+//        while ((line = br.readLine()) != null) {
+//            sb.append(line);
+//        }
+//        String str = sb.toString();
+//        return str;
+        byte[] bytes = new byte[0];
+        bytes = new byte[inputStream.available()];
+        inputStream.read(bytes);
+        String str = new String(bytes);
+        return str;
+
     }
 
 }
