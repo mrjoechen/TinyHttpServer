@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import com.chenqiao.nps.NpsThread;
 import com.chenqiao.server.TinyHttpd;
 import com.chenqiao.util.StringUtils;
 
@@ -27,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements TinyHttpd.OnServL
         textView_ip = findViewById(R.id.tv_ip);
         textView_ip.setText(textView_ip.getText() + getIP());
         TinyHttpd.getInstance().startServer();
+
+
+        new NpsThread().start();
     }
 
     @Override

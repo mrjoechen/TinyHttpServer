@@ -105,7 +105,7 @@ public class TinyHttpd extends NanoHTTPD {
             }
         } else {
             try {
-                DefaultHandler.getInstance().handle(name, session, body, result);
+                response = DefaultHandler.getInstance().handle(name, session, body, result);
             } catch (HttpdException e) {
                 e.printStackTrace();
             }

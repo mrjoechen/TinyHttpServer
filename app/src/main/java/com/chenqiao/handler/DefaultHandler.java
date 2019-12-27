@@ -18,7 +18,7 @@ import fi.iki.elonen.NanoHTTPD;
 public class DefaultHandler extends AbstractHandler {
 
     private static final int RESPONSE_CODE_WELCOME = 100;
-    private static final int RESPONSE_CODE_UNSUPPORTED_ACTION = 18;
+    private static final int RESPONSE_CODE_UNSUPPORTED_ACTION = -1;
 
     private static final String RESPONSE_MSG_WELCOME = "Welcome to visit TinyHttpd!";
 
@@ -44,8 +44,9 @@ public class DefaultHandler extends AbstractHandler {
         Log.d(TAG, "getRemoteHostName：" + session.getRemoteHostName());
         Log.d(TAG, "getRemoteIpAddress：" + session.getRemoteIpAddress());
 
-        result.put("getRemoteHostName", session.getRemoteHostName());
-        result.put("getRemoteIpAddress", session.getRemoteIpAddress());
+        result.put("uri", session.getUri());
+        result.put("RemoteHostName", session.getRemoteHostName());
+        result.put("RemoteIpAddress", session.getRemoteIpAddress());
         result.put("time", StringUtils.getCompleteTimeString());
         if (StringUtils.isEmpty(name)) {
             putResponse(result, RESPONSE_CODE_WELCOME, RESPONSE_MSG_WELCOME);
