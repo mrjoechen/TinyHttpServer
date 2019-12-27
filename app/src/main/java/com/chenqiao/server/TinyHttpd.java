@@ -2,14 +2,21 @@ package com.chenqiao.server;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.util.JsonWriter;
 import android.util.Log;
 
 import com.chenqiao.handler.AbstractHandler;
+import com.chenqiao.handler.DefaultHandler;
 import com.chenqiao.handler.HttpdHandler;
+import com.chenqiao.handler.TestHandler;
 import com.chenqiao.util.StringUtils;
+
+import org.json.JSONObject;
+import org.json.JSONStringer;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +47,9 @@ public class TinyHttpd extends NanoHTTPD {
 
     private TinyHttpd() {
         super(TINY_SERVER_IP, TINY_SERVR_PORT);
+
+        //注册handler
+        registerHandler(TestHandler.class);
     }
 
     @Override
@@ -74,12 +84,49 @@ public class TinyHttpd extends NanoHTTPD {
 
         Log.d(TAG, "--------------------------------------");
 
+        final Map<String, Object> result = new HashMap<>();
+
+        String body = null;
+        if (Method.POST == method) {
+            body = getPostData(session);
+        }
+
+        String name;
+        int slash = uri.indexOf("/");
+        name = (slash > 0 ? uri.substring(0, slash) : uri.toString()).toLowerCase().substring(1, uri.length());
+
+        AbstractHandler handler = mHandlerMap.get(name);
+        if (handler != null) {
+            try {
+                response = handler.handle(name, session, body, result);
+            } catch (HttpdException e) {
+                e.printStackTrace();
+                AbstractHandler.putResponse(result, e.errCode, e.errMsg);
+            }
+        } else {
+            try {
+                DefaultHandler.getInstance().handle(name, session, body, result);
+            } catch (HttpdException e) {
+                e.printStackTrace();
+            }
+        }
+
+        if (response == null) {
+
+            JSONObject jsonObject = new JSONObject(result);
+            String msg = jsonObject.toString();
+            response = newFixedLengthResponse(msg);
+            response.addHeader("Access-Control-Allow-Origin", "*");
+            Log.i(TAG, msg);
+        }
+
+
         if (!StringUtils.isEmpty(uri) && !"/favicon.ico".equals(uri)){
             if (mOnServListener != null){
                 mHandler.post(new Runnable() {
                     @Override
                     public void run() {
-                        mOnServListener.onServe(uri);
+                        mOnServListener.onServe(new JSONObject(result).toString());
                     }
                 });
             }
@@ -94,12 +141,16 @@ public class TinyHttpd extends NanoHTTPD {
             String name = annotation.name();
             if (StringUtils.isNotEmpty(name)) {
                 try {
+//                    Constructor declaredConstructor = handlerClazz.getDeclaredConstructor();
+//                    declaredConstructor.setAccessible(true);
                     AbstractHandler handlerInstance = handlerClazz.newInstance();
                     mHandlerMap.put(name, handlerInstance);
                 } catch (InstantiationException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
+//                } catch (NoSuchMethodException e) {
+//                    e.printStackTrace();
                 }
             }
         }

@@ -18,13 +18,12 @@ public abstract class AbstractHandler {
      * <p>若返回不为null,则直接将返回值作为响应输出</p>
      * <p>若抛出异常，则将根据异常输出响应</p>
      * @param name
-     * @param subName 全小写的方法名
      * @param session
      * @param body
      * @param result
      * @return
      */
-    public abstract NanoHTTPD.Response handle(String name, String subName, NanoHTTPD.IHTTPSession session, String body, Map<String, Object> result) throws HttpdException;
+    public abstract NanoHTTPD.Response handle(String name, NanoHTTPD.IHTTPSession session, String body, Map<String, Object> result) throws HttpdException;
 
     public static void putResponse(Map<String, Object> response, int code, String msg) {
         response.put("errcode", code);

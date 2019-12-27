@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- default toast -->
+    <dimen name="default_toast_max_width">600dp</dimen>
+    <dimen name="default_toast_padding_v">12dp</dimen>
+    <dimen name="default_toast_padding_h">24dp</dimen>
+    <dimen name="default_toast_text_size">20dp</dimen>
+</resources>

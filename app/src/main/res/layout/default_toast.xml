@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:maxWidth="@dimen/default_toast_max_width"
+          android:background="@drawable/default_toast_bg"
+          android:paddingTop="@dimen/default_toast_padding_v"
+          android:paddingBottom="@dimen/default_toast_padding_v"
+          android:paddingLeft="@dimen/default_toast_padding_h"
+          android:paddingRight="@dimen/default_toast_padding_h"
+          android:textColor="#ffffffff"
+          android:textSize="@dimen/default_toast_text_size"
+          android:gravity="center"/>
