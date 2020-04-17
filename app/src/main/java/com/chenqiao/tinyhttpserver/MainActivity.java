@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity implements TinyHttpd.OnServL
 
     private TextView textView;
     private TextView textView_ip;
+    private NpsThread npsThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,13 +32,15 @@ public class MainActivity extends AppCompatActivity implements TinyHttpd.OnServL
         TinyHttpd.getInstance().startServer();
 
 
-        new NpsThread().start();
+        npsThread = new NpsThread();
+        npsThread.start();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         TinyHttpd.getInstance().stopServer();
+        npsThread.stopNps();
     }
 
     @Override

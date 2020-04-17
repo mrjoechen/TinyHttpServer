@@ -121,6 +121,7 @@ public class TinyHttpd extends NanoHTTPD {
         }
 
 
+        // 浏览器请求单独请求 网页icon 过滤此请求
         if (!StringUtils.isEmpty(uri) && !"/favicon.ico".equals(uri)){
             if (mOnServListener != null){
                 mHandler.post(new Runnable() {
