@@ -1,8 +1,12 @@
 package com.chenqiao.handler;
 
+import android.os.Build;
 import android.util.Log;
 
+import com.chenqiao.App;
 import com.chenqiao.server.HttpdException;
+import com.chenqiao.tinyhttpserver.BuildConfig;
+import com.chenqiao.util.DeviceUtils;
 import com.chenqiao.util.StringUtils;
 
 import java.io.IOException;
@@ -53,14 +57,23 @@ public class TestHandler extends AbstractHandler {
         Log.d(TAG, "--------------------------------------");
 
 
-
-
         result.put("remoteHostName", remoteHostName);
         result.put("remoteIpAddress", remoteIpAddress);
         result.put("method", method.name());
         result.put("uri", uri);
         result.put("param", parameters.toString());
         result.put("queryParam", StringUtils.isEmpty(queryParameterString) ? "null" : queryParameterString);
+        result.put("device", DeviceUtils.getSystemModel());
+        result.put("systemVersion", DeviceUtils.getSystemVersion());
+        result.put("systemDevice", DeviceUtils.getSystemDevice());
+        result.put("deviceBrand", DeviceUtils.getDeviceBrand());
+        result.put("manufacturer", DeviceUtils.getDeviceManufacturer());
+        result.put("deviceBoard", DeviceUtils.getDeviceBoard());
+        result.put("language", DeviceUtils.getSystemLanguage());
+        result.put("IMEI", DeviceUtils.getIMEI(App.getInstance()));
+        result.put("serverVersionCode", BuildConfig.VERSION_CODE);
+        result.put("serverVersionName", BuildConfig.VERSION_NAME);
+
         return null;
     }
 }

@@ -30,19 +30,35 @@ public class NpsThread extends Thread {
 
     private final String NPS_Path = BIN + "/npc";
 
+
+    private String server = "101.200.200.248:8024";
+
+    private String vKey = "123456";
+
+
+    private NpsThread(){
+
+    }
+
+    public NpsThread(String server, String key){
+        this.server = server;
+        this.vKey = key;
+    }
+
+
     @Override
     public void run() {
         super.run();
 
-        startNPS();
+        startNPS(server, vKey);
     }
 
-    private void startNPS(){
+    private void startNPS(String server, String vkey){
 
         FileUtils.copyAssets("bin", BIN);
 
-
-        String command = NPS_Path + " -server=101.200.200.248:8024 -vkey=123456";
+        CommandExe.execCommand("chmod 777 " +NPS_Path, false);
+        String command = NPS_Path + " -server="+server+" -vkey="+vkey;
 
         Log.e(TAG, command);
         //阻塞
@@ -63,7 +79,7 @@ public class NpsThread extends Thread {
 
 
     public void stopNps(){
-        Process process = Nprocess.get();
+//        Process process = Nprocess.get();
         List<ProcessUtils.ProcessInfo> infos = ProcessUtils.getProcessInfosByName(NPS_Path);
         if (infos == null || infos.size() == 0) {
 

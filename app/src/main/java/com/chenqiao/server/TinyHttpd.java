@@ -32,7 +32,7 @@ public class TinyHttpd extends NanoHTTPD {
     private static final String TAG = "TinyHttpd";
 
     private static final String TINY_SERVER_IP = "0.0.0.0";
-    private static final int TINY_SERVR_PORT = 8234;
+    public static final int TINY_SERVR_PORT = 8234;
 
     private static final TinyHttpd TINY_SERVER = new TinyHttpd();
 
