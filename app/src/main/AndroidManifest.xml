@@ -38,6 +38,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service android:name="com.chenqiao.services.NpsService"/>
+        <service android:name="com.chenqiao.services.HttpdService"/>
     </application>
 
 </manifest>

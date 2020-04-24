@@ -32,6 +32,7 @@ public class CommandExe {
     public static class CommandResult {
         public int result = -1;
         public String errorMsg;
+        public Process process;
         public String successMsg;
     }
 
@@ -73,6 +74,97 @@ public class CommandExe {
             }
             os.writeBytes(COMMAND_EXIT);
             os.flush();
+
+            commandResult.result = process.waitFor();
+            //获取错误信息
+            successMsg = new StringBuilder();
+            errorMsg = new StringBuilder();
+            successResult = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            errorResult = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String s;
+            while ((s = successResult.readLine()) != null) successMsg.append(s);
+            while ((s = errorResult.readLine()) != null) errorMsg.append(s);
+            commandResult.successMsg = successMsg.toString();
+            commandResult.errorMsg = errorMsg.toString();
+            Log.i(TAG, commandResult.result + " | " + commandResult.successMsg
+                    + " | " + commandResult.errorMsg);
+        } catch (IOException e) {
+            String errmsg = e.getMessage();
+            if (errmsg != null) {
+                Log.e(TAG, errmsg);
+            } else {
+                e.printStackTrace();
+            }
+        } catch (Exception e) {
+            String errmsg = e.getMessage();
+            if (errmsg != null) {
+                Log.e(TAG, errmsg);
+            } else {
+                e.printStackTrace();
+            }
+        } finally {
+            try {
+                if (os != null) os.close();
+                if (successResult != null) successResult.close();
+                if (errorResult != null) errorResult.close();
+            } catch (IOException e) {
+                String errmsg = e.getMessage();
+                if (errmsg != null) {
+                    Log.e(TAG, errmsg);
+                } else {
+                    e.printStackTrace();
+                }
+            }
+//            if (process != null) process.destroy();
+        }
+        return commandResult;
+    }
+
+
+    public interface LogListener{
+        void onLog(String log);
+    }
+
+    /**
+     * 执行命令并阻塞等待log输出
+     * @param command
+     * @param isRoot
+     * @return
+     */
+    public static CommandResult execCommandWithLog(String command, boolean isRoot, LogListener logListener) {
+        String[] commands = {command};
+        CommandResult commandResult = new CommandResult();
+        if (commands == null || commands.length == 0) return commandResult;
+        Process process = null;
+        DataOutputStream os = null;
+        BufferedReader successResult = null;
+        BufferedReader errorResult = null;
+        StringBuilder successMsg = null;
+        StringBuilder errorMsg = null;
+        try {
+            process = Runtime.getRuntime().exec(isRoot ? COMMAND_SU : COMMAND_SH);
+            os = new DataOutputStream(process.getOutputStream());
+            for (String c : commands) {
+                if (c != null) {
+                    os.write(c.getBytes());
+                    os.writeBytes(COMMAND_LINE_END);
+                    os.flush();
+                }
+            }
+            os.writeBytes(COMMAND_EXIT);
+            os.flush();
+
+
+            successResult = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            errorResult = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+            String a;
+            while ((a = successResult.readLine()) != null) {
+                Log.i(TAG, a);
+                if(logListener != null){
+                    logListener.onLog(a);
+                }
+            }
+
             commandResult.result = process.waitFor();
             //获取错误信息
             successMsg = new StringBuilder();

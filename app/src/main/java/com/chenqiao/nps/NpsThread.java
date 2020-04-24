@@ -1,6 +1,8 @@
 package com.chenqiao.nps;
 
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 
 import com.chenqiao.App;
@@ -27,6 +29,7 @@ public class NpsThread extends Thread {
 
     private AtomicReference<Process> Nprocess = new AtomicReference<>();
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
 
     private final String NPS_Path = BIN + "/npc";
 
@@ -62,7 +65,19 @@ public class NpsThread extends Thread {
 
         Log.e(TAG, command);
         //阻塞
-        CommandExe.execCommand(command, false);
+        CommandExe.execCommandWithLog(command, false, new CommandExe.LogListener() {
+            @Override
+            public void onLog(final String log) {
+                mHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if(npsLogListener != null){
+                            npsLogListener.onNpsLog(log);
+                        }
+                    }
+                });
+            }
+        });
         Log.e(TAG, "nps is terminated !!!");
 
 
@@ -75,6 +90,18 @@ public class NpsThread extends Thread {
 //
 //        }
 
+    }
+
+
+    public void setNpsLogListener(NpsLogListener npsLogListener) {
+        this.npsLogListener = npsLogListener;
+    }
+
+    private NpsLogListener npsLogListener;
+
+    public interface NpsLogListener{
+
+        void onNpsLog(String log);
     }
 
 
@@ -111,6 +138,9 @@ public class NpsThread extends Thread {
                 }
             }
         }
+
+        this.npsLogListener = null;
+
     }
 
 
