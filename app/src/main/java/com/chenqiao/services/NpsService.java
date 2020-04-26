@@ -20,10 +20,10 @@ public class NpsService extends Service {
     private NpsThread npsThread;
     private NpsBinder npsBinder;
 
-
     @Override
-    public void onCreate() {
-        super.onCreate();
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        String vkey = intent.getStringExtra("vkey");
 
         if (npsThread != null){
             if (npsThread.isAlive()){
@@ -32,13 +32,8 @@ public class NpsService extends Service {
             }
         }
 
-        npsThread = new NpsThread("101.200.200.248:8024", "123456");
+        npsThread = new NpsThread("101.200.200.248:8024", (vkey == null || vkey.equals("")) ? "123456" : vkey);
         npsThread.start();
-
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
 
 
         return super.onStartCommand(intent, flags, startId);
@@ -85,24 +80,27 @@ public class NpsService extends Service {
             return serviceStatus;
         }
 
-
         private NpsServiceLogListener npsServiceLogListener;
 
         public void setNpsServiceLogListener(final NpsServiceLogListener listener) {
             this.npsServiceLogListener = listener;
 
-            if (npsServiceLogListener == null){
-                npsThread.setNpsLogListener(null);
-            }else {
-                npsThread.setNpsLogListener(new NpsThread.NpsLogListener() {
-                    @Override
-                    public void onNpsLog(String log) {
-                        if (npsServiceLogListener != null){
-                            npsServiceLogListener.onNpsServiceLog(log);
+            if (npsThread != null && npsThread.isAlive()){
+                if (npsServiceLogListener == null){
+                    npsThread.setNpsLogListener(null);
+                }else {
+                    npsThread.setNpsLogListener(new NpsThread.NpsLogListener() {
+                        @Override
+                        public void onNpsLog(String log) {
+                            if (npsServiceLogListener != null){
+                                npsServiceLogListener.onNpsServiceLog(log);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
+
+
 
         }
 

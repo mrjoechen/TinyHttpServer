@@ -9,12 +9,16 @@ import com.chenqiao.tinyhttpserver.BuildConfig;
 import com.chenqiao.util.DeviceUtils;
 import com.chenqiao.util.StringUtils;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
 import fi.iki.elonen.NanoHTTPD;
+
+import static fi.iki.elonen.NanoHTTPD.newFixedLengthResponse;
 
 /**
  * Created by chenqiao on 2019-12-27.
@@ -45,14 +49,15 @@ public class TestHandler extends AbstractHandler {
         String queryParameterString = session.getQueryParameterString();
         Log.d(TAG + "-queryParam", StringUtils.isEmpty(queryParameterString) ? "null" : queryParameterString);
 
-        InputStream inputStream = session.getInputStream();
-        String s = "";
-        try {
-            s = StringUtils.parseInputStreamToString(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.d(TAG + "-body", s);
+//        InputStream inputStream = session.getInputStream();
+//        String s = "";
+//        try {
+//            s = StringUtils.parseInputStreamToString(inputStream);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Log.d(TAG + "-body", s);
+        Log.d(TAG + "-body", body+"");
 
         Log.d(TAG, "--------------------------------------");
 
@@ -73,7 +78,13 @@ public class TestHandler extends AbstractHandler {
         result.put("IMEI", DeviceUtils.getIMEI(App.getInstance()));
         result.put("serverVersionCode", BuildConfig.VERSION_CODE);
         result.put("serverVersionName", BuildConfig.VERSION_NAME);
+        result.put("body", body);
 
-        return null;
+        JSONObject jsonObject = new JSONObject(result);
+        String msg = jsonObject.toString();
+        NanoHTTPD.Response response = newFixedLengthResponse(msg);
+        response.addHeader("Access-Control-Allow-Origin", "*");
+
+        return response;
     }
 }

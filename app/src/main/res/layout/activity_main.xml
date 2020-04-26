@@ -13,21 +13,31 @@
         android:src="@mipmap/radio_button_select_red"
         app:layout_constraintBottom_toBottomOf="@+id/tv_ip"
         app:layout_constraintEnd_toStartOf="@+id/btn_start"
-        app:layout_constraintHorizontal_bias="0.822"
+        app:layout_constraintHorizontal_bias="0.88"
         app:layout_constraintStart_toEndOf="@+id/tv_ip"
-        app:layout_constraintTop_toTopOf="@+id/tv_ip"
-        app:layout_constraintVertical_bias="0.727" />
+        app:layout_constraintTop_toTopOf="@+id/tv_ip"/>
 
     <TextView
         android:id="@+id/tv_ip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="IP Addr："
-        app:layout_constraintHorizontal_bias="0.36"
+        android:layout_marginTop="16dp"
+        android:text="IP："
+        app:layout_constraintHorizontal_bias="0.093"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_vkey"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:hint="vkey"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_ip"
+        app:layout_constraintEnd_toStartOf="@+id/iv_status"
+        app:layout_constraintStart_toEndOf="@+id/tv_ip"
+        app:layout_constraintTop_toTopOf="@+id/tv_ip"
+        android:layout_margin="20dp"/>
 
     <Button
         android:id="@+id/btn_start"
@@ -36,10 +46,10 @@
         android:text="Start"
         app:layout_constraintBottom_toBottomOf="@+id/tv_ip"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.882"
+        app:layout_constraintHorizontal_bias="0.938"
         app:layout_constraintStart_toEndOf="@+id/tv_ip"
         app:layout_constraintTop_toTopOf="@+id/tv_ip"
-        app:layout_constraintVertical_bias="0.586" />
+        app:layout_constraintVertical_bias="0.448" />
 
     <ScrollView
         android:id="@+id/sc"

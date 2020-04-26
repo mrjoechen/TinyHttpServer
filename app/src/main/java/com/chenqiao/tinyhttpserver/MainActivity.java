@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements TinyHttpd.OnServL
     private NpsService.NpsBinder npsBinder;
     private ServiceConnection npsConn;
     private ScrollView scrollView;
+    private EditText etVkey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +60,8 @@ public class MainActivity extends AppCompatActivity implements TinyHttpd.OnServL
 
         scrollView = findViewById(R.id.sc);
 
+        etVkey = findViewById(R.id.et_vkey);
 
-        if (TinyHttpd.getInstance().isAlive()){
-            ivStatus.setImageResource(R.mipmap.radio_button_select_green);
-            btnStart.setText("Stop");
-        }else {
-            ivStatus.setImageResource(R.mipmap.radio_button_select_red);
-            btnStart.setText("Start");
-        }
 
         npsConn = new ServiceConnection() {
             @Override
@@ -84,7 +80,19 @@ public class MainActivity extends AppCompatActivity implements TinyHttpd.OnServL
             }
         };
 
-        bindService(new Intent(MainActivity.this, NpsService.class), npsConn, BIND_AUTO_CREATE);
+        if (TinyHttpd.getInstance().isAlive()){
+            etVkey.setEnabled(false);
+            ivStatus.setImageResource(R.mipmap.radio_button_select_green);
+            btnStart.setText("Stop");
+
+            bindService(new Intent(MainActivity.this, NpsService.class), npsConn, BIND_AUTO_CREATE);
+
+        }else {
+            etVkey.setEnabled(true);
+            ivStatus.setImageResource(R.mipmap.radio_button_select_red);
+            btnStart.setText("Start");
+        }
+
 
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -92,16 +100,23 @@ public class MainActivity extends AppCompatActivity implements TinyHttpd.OnServL
 
                 if (!TinyHttpd.getInstance().isAlive()){
 
+                    etVkey.setEnabled(false);
                     startService(new Intent(MainActivity.this, HttpdService.class));
-                    startService(new Intent(MainActivity.this, NpsService.class));
+                    Intent serviceIntent = new Intent(MainActivity.this, NpsService.class);
+                    serviceIntent.putExtra("vkey", etVkey.getText().toString());
 
                     bindService(new Intent(MainActivity.this, NpsService.class), npsConn, BIND_AUTO_CREATE);
+
+                    startService(serviceIntent);
 
                     textView_ip.setText(getIP() + ":" +TinyHttpd.getInstance().getListeningPort());
 
                     btnStart.setText("Stop");
                     ivStatus.setImageResource(R.mipmap.radio_button_select_green);
                 }else {
+
+                    etVkey.setEnabled(true);
+
 
                     if (npsConn != null){
                         unbindService(npsConn);

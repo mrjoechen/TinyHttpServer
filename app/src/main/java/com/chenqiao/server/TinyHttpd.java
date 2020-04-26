@@ -54,7 +54,7 @@ public class TinyHttpd extends NanoHTTPD {
     @Override
     public Response serve(IHTTPSession session) {
 
-        Response response = newFixedLengthResponse("welcome to ngrok build by chenqiao!");
+        Response response = newFixedLengthResponse("welcome to nps build by chenqiao!");
         response.addHeader("Access-Control-Allow-Headers", "authorization");
         response.addHeader("Access-Control-Allow-Origin", "*");
         Log.d(TAG, "--------------------------------------");
@@ -72,16 +72,16 @@ public class TinyHttpd extends NanoHTTPD {
         String queryParameterString = session.getQueryParameterString();
         Log.d(TAG + "-queryParam", StringUtils.isEmpty(queryParameterString) ? "null" : queryParameterString);
 
-        InputStream inputStream = session.getInputStream();
-        String s = "";
-        try {
-            s = StringUtils.parseInputStreamToString(inputStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.d(TAG + "-body", s);
+        //注：只能读取一次
+//        InputStream inputStream = session.getInputStream();
+//        String s = "";
+//        try {
+//            s = StringUtils.parseInputStreamToString(inputStream);
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//        Log.d(TAG + "-body", s);
 
-        Log.d(TAG, "--------------------------------------");
 
         final Map<String, Object> result = new HashMap<>();
 
@@ -89,6 +89,9 @@ public class TinyHttpd extends NanoHTTPD {
         if (Method.POST == method) {
             body = getPostData(session);
         }
+
+        Log.d(TAG + "-body", body+"");
+        Log.d(TAG, "--------------------------------------");
 
         String name;
         int slash = uri.indexOf("/");
