@@ -54,25 +54,9 @@ jobs:
         with:
           name: my-build-apk
           path: ./**/*.apk
-      - name: Download APK from build
-        uses: actions/download-artifact@v1
-        with:
-          name: my-build-apk
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
+      - name: Release
+        uses: ShaunLWM/action-release-debugapk@master
         env:
-          GITHUB_TOKEN: ${{ secrets.BUILD_ACTION_TOKEN }} 
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }} 
-      - name: Upload Release APK
-        id: upload_release_asset
-        uses: actions/upload-release-asset@v1.0.1
-        env:
-          GITHUB_TOKEN: ${{ secrets.BUILD_ACTION_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: apk/my-build-apk
-          asset_name: app-debug.apk
-          asset_content_type: application/zip
+         GITHUB_TOKEN: ${{ secrets.BUILD_ACTION_TOKEN }}
+         APP_FOLDER: app
+         RELEASE_TITLE: New Build
