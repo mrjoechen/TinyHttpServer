@@ -52,7 +52,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v2
         with:
-          name: my-build-apk
+          name: app-debug
           path: ./**/*.apk
       - name: Release
         uses: ShaunLWM/action-release-debugapk@master
