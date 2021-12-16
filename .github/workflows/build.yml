@@ -58,7 +58,6 @@ jobs:
         uses: actions/download-artifact@v1
         with:
           name: my-build-apk
-          path: ./**/*.apk
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -74,6 +73,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.BUILD_ACTION_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./**/*.apk
+          asset_path: apk/my-build-apk
           asset_name: app-debug.apk
           asset_content_type: application/zip
